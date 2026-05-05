@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>College Chatbot</title>
+    <style>
+
+        body {
+            font-family: Verdana, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 700px;
+            
+            background: white;
+            border-radius: 10px;
+            
+        }
+
+        .header {
+            background-color: darkred;
+            color: white;
+            padding: 20px;
+            font-size: 18px;
+        }
+
+        #chat-box {
+            height: 500px;
+            overflow-y: scroll;
+            padding: 15px;
+            background: #fafafa;
+            
+        }
+
+        .message {
+            margin-bottom: 15px;
+        }
+
+        .user-msg {
+            text-align: right;
+        }
+
+        .user-msg .bubble {
+            background-color: lightgreen;
+            color: black;
+            padding: 10px 14px;
+            border-radius: 15px 15px 0 15px;
+            
+            font-size: 14px;
+        }
+
+        .bot-msg .bubble {
+            background-color: lightcyan;
+            color: black;
+            padding: 10px 14px;
+            border-radius: 15px 15px 15px 0;
+            
+            font-size: 14px;
+        }
+
+        .label {
+            font-size: 11px;
+            color: lightblue;
+            margin-bottom: 4px;
+        }
+
+        .result-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 8px;
+            font-size: 13px;
+        }
+
+        .result-table th {
+            background-color: darkcyan;
+            color: black;
+            padding: 6px 10px;
+            text-align: left;
+        }
+
+        .result-table td {
+            padding: 6px 10px;
+            border-bottom: 1px;
+        }
+
+        .sql-used {
+            font-size: 11px;
+            color: #777;
+            margin-top: 6px;
+            font-style: italic;
+        }
+
+        .input-area {
+            display: flex;
+            padding: 12px;
+            border-top: 1px ;
+            background: white;
+        }
+
+        #user-input {
+            flex: 1;
+            padding: 10px;
+            border: 1px;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        #send-btn {
+            margin-left: 10px;
+            padding: 10px 20px;
+            background-color: lightskyblue;
+            color: black;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <div class="header">
+        Chatbot for College details
+    </div>
+
+    <div id="chat-box">
+    </div>
+
+   
+
+    <div class="input-area">
+        <input type="text" id="user-input" placeholder="Type your question here..." />
+        <button id="send-btn" onclick="sendMessage()">Send</button>
+    </div>
+
+</div>
+
+<script>
+
+    
+    window.onload = function() {
+        addBotMessage("I am the College chatbot. Ask me about the following:        1.show all students/all students/list students       2.show attendance below 75%      3.show low attendance     4.cse     5.ece     6.my department     7.show cgpa above 8.0/show cgpa greater than 8.0       8.show cgpa below 6.0/show cgpa less than 6.0      9.show students with pending fees        10.show students whose fee is paid       11.show placed students/show placement of students      12.show highest package/show best package        13.show topper student/ show student with highest cgpa      14.show students from first year/show year 1 students        15.show students from second year/show year 2 students       16.show subjects" , null, null);
+        }
+
+    
+
+    
+    function sendMessage() {
+        var message = document.getElementById("user-input").value;
+        message = message.trim();
+
+        
+        if (message == "") {
+            return;
+        }
+
+        
+        addUserMessage(message);
+
+        
+        document.getElementById("user-input").value = "";
+
+        
+        fetch("/chat", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ message: message })
+        })
+        .then(function(res) {
+            return res.json();
+        })
+        .then(function(data) {
+            addBotMessage(data.response, data.data, data.query);
+        })
+        .catch(function(err) {
+            addBotMessage("Something went wrong.", null, null);
+        });
+    }
+
+    
+    document.getElementById("user-input").addEventListener("keypress", function(e) {
+        if (e.key == "Enter") {
+            sendMessage();
+        }
+    });
+
+    
+    function addUserMessage(text) {
+        var chatBox = document.getElementById("chat-box");
+
+        var div = document.createElement("div");
+        div.className = "message user-msg";
+
+        div.innerHTML = '<div class="label">You</div><div class="bubble">' + text + '</div>';
+
+        chatBox.appendChild(div);
+        chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    
+    function addBotMessage(text, data, query) {
+        var chatBox = document.getElementById("chat-box");
+
+        var div = document.createElement("div");
+        div.className = "message bot-msg";
+
+        var html = '<div class="label">Bot</div><div class="bubble">' + text;
+
+        
+        if (data != null && data.length > 0) {
+
+            html += '<table class="result-table"><thead><tr>';
+
+            
+            var firstRow = data[0];
+            var numCols = firstRow.length;
+
+            
+            for (var i = 0; i < numCols; i++) {
+                html += '<th>col' + (i + 1) + '</th>';
+            }
+            html += '</tr></thead><tbody>';
+
+            
+            for (var j = 0; j < data.length; j++) {
+                html += '<tr>';
+                for (var i = 0; i < data[j].length; i++) {
+                    html += '<td>' + data[j][i] + '</td>';
+                }
+                html += '</tr>';
+            }
+
+            html += '</tbody></table>';
+        }
+
+        
+        if (query != null) {
+            html += '<div class="sql-used">SQL: ' + query + '</div>';
+        }
+
+        html += '</div>';
+        div.innerHTML = html;
+
+        chatBox.appendChild(div);
+        chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+</script>
+
+</body>
+</html>

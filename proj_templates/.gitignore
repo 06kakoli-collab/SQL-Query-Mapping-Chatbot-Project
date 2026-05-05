@@ -1,0 +1,84 @@
+# ========================
+# PYTHON BACKEND
+# ========================
+
+# Byte-compiled / optimized files
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual Environment (your local Python environment)
+venv/
+env/
+.venv/
+ENV/
+
+# Environment variables (API keys, secrets, DB passwords)
+.env
+.env.local
+.env.production
+
+# Flask specific
+instance/
+flask_session/
+
+# FastAPI / Uvicorn
+*.log
+
+# Distribution / packaging
+dist/
+build/
+*.egg-info/
+.eggs/
+
+# ========================
+# DATABASE (SQLite)
+# ========================
+
+# SQLite database files (don't push actual data)
+*.sqlite3
+*.sqlite
+*.db
+
+# Database migrations (optional, remove if you WANT to push migrations)
+# migrations/
+
+# ========================
+# FRONTEND (HTML/CSS/JS)
+# ========================
+
+# No node_modules since you're using plain HTML/CSS/JS
+# But ignore if you use any package manager locally
+node_modules/
+
+# ========================
+# VS CODE
+# ========================
+
+.vscode/
+*.code-workspace
+
+# ========================
+# OPERATING SYSTEM FILES
+# ========================
+
+# Mac
+.DS_Store
+
+# Windows
+Thumbs.db
+desktop.ini
+
+# ========================
+# MISCELLANEOUS
+# ========================
+
+# Jupyter Notebooks checkpoints (if used)
+.ipynb_checkpoints/
+
+# Pytest cache
+.pytest_cache/
+
+# Coverage reports
+htmlcov/
+.coverage
